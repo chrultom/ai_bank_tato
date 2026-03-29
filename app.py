@@ -7,14 +7,16 @@ from dotenv import load_dotenv
 from filelock import FileLock
 
 # Load environment variables
-load_dotenv()
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+env_path = os.path.join(BASE_DIR, ".env")
+load_dotenv(env_path)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback-secret-key")
 APP_PIN = os.getenv("APP_PIN", "1234")
 
-DATA_FILE = "data.json"
-LOCK_FILE = "data.json.lock"
+DATA_FILE = os.path.join(BASE_DIR, "data.json")
+LOCK_FILE = os.path.join(BASE_DIR, "data.json.lock")
 
 def get_data():
     """Reads data from the JSON file with locking to prevent concurrent access issues."""
