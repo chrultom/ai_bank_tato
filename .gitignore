@@ -1,0 +1,27 @@
+# Virtual environment
+venv/
+ENV/
+env/
+
+# Environment variables (secrets)
+.env
+
+# Local database / data
+data.json
+data.json.lock
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE settings
+.vscode/
+.idea/
+
+# Flask instance folder
+instance/
+
+# OS specific
+.DS_Store
+Thumbs.db

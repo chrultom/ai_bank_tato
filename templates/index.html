@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dad Bank - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0f172a',
+                        card: '#1e293b',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for history */
+        .history-scroll::-webkit-scrollbar { width: 6px; }
+        .history-scroll::-webkit-scrollbar-track { background: transparent; }
+        .history-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        .history-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+        [v-cloak] { display: none; }
+    </style>
+</head>
+<body class="bg-dark text-slate-200 min-h-screen font-sans antialiased pb-20 selection:bg-blue-500/30">
+
+    <!-- Navbar -->
+    <nav class="bg-card border-b border-slate-700/50 sticky top-0 z-30 backdrop-blur-sm bg-card/90">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center border border-blue-500/30">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white">Dad Bank</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="openSettingsModal()" class="text-slate-400 hover:text-white transition p-2 rounded-full hover:bg-slate-700/50">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    </button>
+                    <form action="/logout" method="POST" class="m-0">
+                        <button type="submit" class="text-slate-400 hover:text-red-400 transition p-2 rounded-full hover:bg-slate-700/50">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Total Balance Summary (Optional nice-to-have) -->
+        <div class="mb-8 p-6 bg-gradient-to-br from-blue-900/40 to-slate-800 rounded-2xl border border-blue-500/20 shadow-lg flex justify-between items-center">
+            <div>
+                <p class="text-slate-400 text-sm font-medium uppercase tracking-wider mb-1">Total Family Vault</p>
+                <h2 id="total-balance" class="text-4xl font-extrabold text-white tracking-tight">0.00 zł</h2>
+            </div>
+            <div class="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/30">
+                <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path></svg>
+            </div>
+        </div>
+
+        <!-- Children Grid -->
+        <div id="children-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Cards will be injected here via JS -->
+            <div class="animate-pulse flex space-x-4 bg-card p-6 rounded-2xl border border-slate-700/50">
+                <div class="flex-1 space-y-4 py-1">
+                    <div class="h-4 bg-slate-700 rounded w-3/4"></div>
+                    <div class="space-y-2">
+                        <div class="h-8 bg-slate-700 rounded"></div>
+                        <div class="h-4 bg-slate-700 rounded w-5/6"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Transaction Modal -->
+    <div id="tx-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeTxModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-slate-700 overflow-hidden pointer-events-auto transform scale-95 opacity-0 transition-all duration-200" id="tx-modal-content">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-xl font-bold text-white" id="tx-modal-title">New Transaction</h3>
+                        <button onclick="closeTxModal()" class="text-slate-400 hover:text-white bg-slate-800 rounded-full p-1 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                    </div>
+                    
+                    <form id="tx-form" onsubmit="submitTransaction(event)">
+                        <input type="hidden" id="tx-child-id">
+                        <input type="hidden" id="tx-type" value="add"> <!-- 'add' or 'sub' -->
+                        
+                        <div class="mb-5">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Amount</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <span class="text-slate-400 sm:text-lg" id="tx-symbol">zł</span>
+                                </div>
+                                <input type="number" step="0.01" id="tx-amount" required
+                                    class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 pl-10 pr-4 text-white text-xl focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                    placeholder="0.00" inputmode="decimal">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-8">
+                            <label class="block text-sm font-medium text-slate-400 mb-2">Description</label>
+                            <input type="text" id="tx-desc" required
+                                class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                                placeholder="E.g., Allowance, Chores...">
+                        </div>
+                        
+                        <button type="submit" id="tx-submit-btn" class="w-full font-bold py-4 px-4 rounded-xl text-lg transition duration-200 shadow-lg">
+                            Confirm
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeSettingsModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <div class="bg-card w-full max-w-md rounded-3xl shadow-2xl border border-slate-700 overflow-hidden pointer-events-auto flex flex-col max-h-[90vh]">
+                <div class="p-6 border-b border-slate-700/50 flex justify-between items-center bg-slate-800/50">
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Family Settings
+                    </h3>
+                    <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white bg-slate-800 rounded-full p-1 transition"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                </div>
+                
+                <div class="p-6 overflow-y-auto history-scroll flex-1">
+                    <form id="settings-form" onsubmit="submitSettings(event)">
+                        <div id="settings-slots" class="space-y-6">
+                            <!-- Settings slots injected here -->
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="p-6 border-t border-slate-700/50 bg-slate-800/30">
+                    <button type="submit" form="settings-form" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl transition duration-200">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let bankData = null;
+
+        // Fetch Initial Data
+        async function loadData() {
+            try {
+                const res = await fetch('/api/data');
+                if (res.status === 401) {
+                    window.location.href = '/login';
+                    return;
+                }
+                bankData = await res.json();
+                renderDashboard();
+            } catch (err) {
+                console.error("Failed to load data", err);
+            }
+        }
+
+        // Render Main View
+        function renderDashboard() {
+            const grid = document.getElementById('children-grid');
+            grid.innerHTML = '';
+            
+            let totalBalance = 0;
+
+            bankData.children.forEach(child => {
+                if (child.is_active) {
+                    totalBalance += child.balance;
+                    
+                    const isPositive = child.balance >= 0;
+                    const colorClass = isPositive ? 'text-teal-400' : 'text-red-400';
+                    const bgClass = isPositive ? 'bg-teal-500/10 border-teal-500/20' : 'bg-red-500/10 border-red-500/20';
+
+                    const card = document.createElement('div');
+                    card.className = `bg-card rounded-3xl border border-slate-700/50 shadow-lg overflow-hidden flex flex-col transition-all hover:border-slate-600 hover:shadow-xl`;
+                    
+                    let historyHTML = '';
+                    if (child.history.length === 0) {
+                        historyHTML = `<div class="text-center py-6 text-slate-500 text-sm">No transactions yet.</div>`;
+                    } else {
+                        historyHTML = child.history.slice(0, 5).map(tx => `
+                            <div class="flex justify-between items-center py-2 border-b border-slate-700/50 last:border-0">
+                                <div>
+                                    <p class="text-sm font-medium text-slate-300 truncate w-32 sm:w-48">${tx.description}</p>
+                                    <p class="text-xs text-slate-500">${new Date(tx.date).toLocaleDateString()} ${new Date(tx.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm font-bold ${tx.amount >= 0 ? 'text-teal-400' : 'text-red-400'}">
+                                        ${tx.amount >= 0 ? '+' : ''}${tx.amount.toFixed(2)}
+                                    </p>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+
+                    card.innerHTML = `
+                        <div class="p-6 pb-4">
+                            <h3 class="text-xl font-bold text-white mb-1">${child.name}</h3>
+                            <div class="mt-4 flex items-baseline gap-2">
+                                <span class="text-4xl font-black ${colorClass} tracking-tight">${child.balance.toFixed(2)} zł</span>
+                            </div>
+                        </div>
+                        
+                        <div class="px-6 py-4 flex gap-3">
+                            <button onclick="openTxModal(${child.id}, 'sub')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-red-400 font-bold py-3 rounded-xl border border-red-500/20 transition flex items-center justify-center gap-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                                Withdraw
+                            </button>
+                            <button onclick="openTxModal(${child.id}, 'add')" class="flex-1 bg-slate-800 hover:bg-slate-700 text-teal-400 font-bold py-3 rounded-xl border border-teal-500/20 transition flex items-center justify-center gap-1">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Deposit
+                            </button>
+                        </div>
+
+                        <div class="bg-slate-800/30 px-6 py-4 flex-1 border-t border-slate-700/50">
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Recent Activity</h4>
+                            <div class="space-y-1">
+                                ${historyHTML}
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+
+            document.getElementById('total-balance').textContent = `${totalBalance.toFixed(2)} zł`;
+            document.getElementById('total-balance').className = `text-4xl font-extrabold tracking-tight ${totalBalance >= 0 ? 'text-teal-400' : 'text-red-400'}`;
+        }
+
+        // Modals Logic
+        function openTxModal(childId, type) {
+            const child = bankData.children.find(c => c.id === childId);
+            document.getElementById('tx-child-id').value = childId;
+            document.getElementById('tx-type').value = type;
+            
+            const title = document.getElementById('tx-modal-title');
+            const symbol = document.getElementById('tx-symbol');
+            const btn = document.getElementById('tx-submit-btn');
+            
+            if (type === 'add') {
+                title.textContent = `Deposit to ${child.name}`;
+                title.className = 'text-xl font-bold text-teal-400';
+                symbol.textContent = '+ zł';
+                btn.className = 'w-full bg-teal-600 hover:bg-teal-500 text-white font-bold py-4 px-4 rounded-xl text-lg transition duration-200 shadow-lg shadow-teal-500/20';
+                btn.textContent = 'Deposit Funds';
+            } else {
+                title.textContent = `Withdraw from ${child.name}`;
+                title.className = 'text-xl font-bold text-red-400';
+                symbol.textContent = '- zł';
+                btn.className = 'w-full bg-red-600 hover:bg-red-500 text-white font-bold py-4 px-4 rounded-xl text-lg transition duration-200 shadow-lg shadow-red-500/20';
+                btn.textContent = 'Withdraw Funds';
+            }
+
+            document.getElementById('tx-amount').value = '';
+            document.getElementById('tx-desc').value = '';
+            
+            const modal = document.getElementById('tx-modal');
+            const content = document.getElementById('tx-modal-content');
+            modal.classList.remove('hidden');
+            // setTimeout for transition
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+                document.getElementById('tx-amount').focus();
+            }, 10);
+        }
+
+        function closeTxModal() {
+            const modal = document.getElementById('tx-modal');
+            const content = document.getElementById('tx-modal-content');
+            content.classList.remove('scale-100', 'opacity-100');
+            content.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        async function submitTransaction(e) {
+            e.preventDefault();
+            const childId = document.getElementById('tx-child-id').value;
+            const type = document.getElementById('tx-type').value;
+            let amount = parseFloat(document.getElementById('tx-amount').value);
+            const desc = document.getElementById('tx-desc').value;
+
+            if (isNaN(amount) || amount <= 0) return;
+
+            if (type === 'sub') amount = -amount;
+
+            const btn = document.getElementById('tx-submit-btn');
+            const origText = btn.textContent;
+            btn.textContent = 'Processing...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/transaction', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ child_id: childId, amount: amount, description: desc })
+                });
+                
+                if (res.ok) {
+                    closeTxModal();
+                    await loadData();
+                } else {
+                    alert("Error processing transaction");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Network error");
+            } finally {
+                btn.textContent = origText;
+                btn.disabled = false;
+            }
+        }
+
+        function openSettingsModal() {
+            const slotsContainer = document.getElementById('settings-slots');
+            slotsContainer.innerHTML = '';
+
+            bankData.children.forEach(child => {
+                const isMain = child.id === 1;
+                slotsContainer.innerHTML += `
+                    <div class="bg-slate-900/50 p-4 rounded-xl border border-slate-700">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="text-sm font-bold text-slate-300">Slot ${child.id}</span>
+                            ${isMain ? `<span class="text-xs font-bold text-blue-400 bg-blue-900/30 px-2 py-1 rounded-md">Always Active</span>` : `
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-active-${child.id}" class="sr-only peer" ${child.is_active ? 'checked' : ''}>
+                                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                            `}
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500 mb-1">Name</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="setting-name-${child.id}" value="${child.name}" required
+                                    class="w-full bg-slate-800 border border-slate-600 rounded-lg py-2 px-3 text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
+                                <button type="button" onclick="resetChild(${child.id}, '${child.name.replace(/'/g, "\\'")}')" class="bg-red-500/20 hover:bg-red-500/40 text-red-400 border border-red-500/30 px-3 py-2 rounded-lg text-xs font-bold transition whitespace-nowrap">Reset Data</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const modal = document.getElementById('settings-modal');
+            modal.classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        async function submitSettings(e) {
+            e.preventDefault();
+            
+            const updates = [];
+            bankData.children.forEach(child => {
+                const nameInput = document.getElementById(`setting-name-${child.id}`);
+                const activeInput = document.getElementById(`setting-active-${child.id}`);
+                
+                updates.push({
+                    id: child.id,
+                    name: nameInput.value,
+                    is_active: child.id === 1 ? true : activeInput.checked
+                });
+            });
+
+            try {
+                const res = await fetch('/api/settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ children: updates })
+                });
+                
+                if (res.ok) {
+                    closeSettingsModal();
+                    await loadData();
+                } else {
+                    alert("Error saving settings");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Network error");
+            }
+        }
+
+        async function resetChild(childId, childName) {
+            if (!confirm(`Are you sure you want to reset all transactions and set the balance to 0 for ${childName}? This action cannot be undone.`)) {
+                return;
+            }
+            try {
+                const res = await fetch('/api/reset_child', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ child_id: childId })
+                });
+                if (res.ok) {
+                    closeSettingsModal();
+                    await loadData();
+                } else {
+                    alert("Error resetting data");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Network error");
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', loadData);
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+# Project Rules: "Dad Bank" (Family Finance Tracker)
+
+## 1. Language & Documentation
+- **Code & Comments:** All code, variable names, function names, and comments MUST be in English.
+- **Documentation:** README.md should be provided in both English and Polish.
+- **Tone:** Professional, clean, and well-documented.
+
+## 2. Tech Stack & Architecture
+- **Backend:** Python 3.x with Flask. Use `render_template` for HTML delivery.
+- **Frontend:** Tailwind CSS via CDN. Style: "Modern Fintech" Dark Mode, Mobile-First.
+- **State Management:** Local `data.json` file. Ensure safe read/write operations.
+- **Environment:** Use `python-dotenv` for configuration. Never hardcode sensitive data.
+
+## 3. Coding Standards
+- **Python:** Follow PEP 8 guidelines. Use descriptive docstrings for all routes and logic.
+- **JavaScript:** Use Vanilla JS (Fetch API) for an asynchronous, SPA-like experience. Avoid full page reloads.
+- **Structure:** - Business logic/API: `app.py`
+  - Presentation: `templates/index.html`
+  - Configuration: `.env`
+
+## 4. Features & Logic
+- **Child Slots:** Support up to 4 children. Slot 1 is always active; Slots 2-4 are toggleable via settings.
+- **Data Integrity:** Each child object must include `id`, `name`, `balance`, `is_active`, and a `history` list (date, amount, description, balance_after).
+- **Security:** Implement a PIN-based login screen using Flask sessions. The PIN is stored in `.env`.
+
+## 5. Deployment & Git Safety
+- **Git:** Ensure `.gitignore` includes `venv/`, `.env`, `data.json`, and `__pycache__/`.
+- **Portfolio:** Generate a `requirements.txt` file and a `README.md` with setup instructions and a clear "Security Disclaimer" (educational project, plain-text PIN).
+
+## 6. UI/UX Requirements
+- Interactive dashboard with large, touch-friendly buttons for mobile use.
+- Use visual cues: Green for positive balances, Red for negative.
+- Modals for transaction inputs to keep the main view clean.
