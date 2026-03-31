@@ -57,7 +57,13 @@
    ```
    Open `http://localhost:5000` in your browser.
 
+6. **Run Tests:**
+   ```bash
+   # Make sure venv is activated
+   pytest
+   ```
+
 ### 🛠️ Future Roadmap (TODO)
-- [ ] Implement unit tests using `pytest` for backend logic.
+- [x] Implement unit tests using `pytest` for backend logic.
 - [ ] Implement end-to-end (E2E) tests using `playwright`.
 - [ ] Configure CI/CD Pipeline (e.g., GitHub Actions) for automated testing and linting.
