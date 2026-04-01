@@ -1,8 +1,8 @@
-# Dad Bank 🏦
+# Parents Bank 🏦
 
-![Dad Bank](https://img.shields.io/badge/Status-Active-success) ![Python](https://img.shields.io/badge/Python-3.x-blue) ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey)
+![Parents Bank](https://img.shields.io/badge/Status-Active-success) ![Python](https://img.shields.io/badge/Python-3.x-blue) ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey)
 
-**Dad Bank** is a lightweight, mobile-first web application built with Python (Flask) and Tailwind CSS. It serves as a virtual "family bank" to help parents track their children's allowances, chores, and expenditures. It supports up to 4 child slots, with real-time updates without page reloads (SPA-like experience via Vanilla JS).
+**Parents Bank** is a lightweight, mobile-first web application built with Python (Flask) and Tailwind CSS. It serves as a virtual "family bank" to help parents track their children's allowances, chores, and expenditures. It supports up to 4 child slots, with real-time updates without page reloads (SPA-like experience via Vanilla JS).
 
 ### 🤖 AI-Assisted Development (Vibe-Coding)
 **Disclaimer:** This project is a deliberate exercise in **AI-assisted development** (sometimes referred to as "vibe-coding"). *Not a single line of code in this repository was written manually.* The entire application—including architecture, backend logic, frontend design, and documentation—was generated using an AI coding assistant. The primary purpose of this project is to develop and showcase competencies in AI orchestration, prompt engineering, and rapid AI-driven software development.
