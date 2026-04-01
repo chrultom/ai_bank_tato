@@ -40,6 +40,8 @@
 3. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
+   # Install Playwright browser
+   playwright install chromium
    ```
 
 4. **Environment Variables:**
@@ -47,6 +49,7 @@
    ```env
    APP_PIN=1234
    SECRET_KEY=your-secret-key
+   DATA_FILE_PATH=data.json
    CHILD_1_NAME=Alice
    # ...
    ```
@@ -60,10 +63,13 @@
 6. **Run Tests:**
    ```bash
    # Make sure venv is activated
-   pytest
+   # Unit tests:
+   pytest tests/test_logic.py
+   # E2E tests:
+   pytest tests/test_e2e.py
    ```
 
 ### 🛠️ Future Roadmap (TODO)
 - [x] Implement unit tests using `pytest` for backend logic.
-- [ ] Implement end-to-end (E2E) tests using `playwright`.
+- [x] Implement end-to-end (E2E) tests using `playwright`.
 - [ ] Configure CI/CD Pipeline (e.g., GitHub Actions) for automated testing and linting.

@@ -15,12 +15,16 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback-secret-key")
 APP_PIN = os.getenv("APP_PIN", "1234")
 
-DATA_FILE = os.path.join(BASE_DIR, "data.json")
-LOCK_FILE = os.path.join(BASE_DIR, "data.json.lock")
+def get_data_file():
+    """Returns the path to the data file, allowing override via environment variable."""
+    return os.getenv("DATA_FILE_PATH", os.path.join(BASE_DIR, "data.json"))
 
 def get_data():
     """Reads data from the JSON file with locking to prevent concurrent access issues."""
-    if not os.path.exists(DATA_FILE):
+    data_file = get_data_file()
+    lock_file = f"{data_file}.lock"
+    
+    if not os.path.exists(data_file):
         default_data = {
             "children": [
                 {"id": 1, "name": os.getenv("CHILD_1_NAME", "Child 1"), "balance": 0.0, "is_active": True, "history": []},
@@ -32,16 +36,19 @@ def get_data():
         save_data(default_data)
         return default_data
 
-    lock = FileLock(LOCK_FILE, timeout=5)
+    lock = FileLock(lock_file, timeout=5)
     with lock:
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
+        with open(data_file, "r", encoding="utf-8") as f:
             return json.load(f)
 
 def save_data(data):
     """Writes data to the JSON file with locking."""
-    lock = FileLock(LOCK_FILE, timeout=5)
+    data_file = get_data_file()
+    lock_file = f"{data_file}.lock"
+    
+    lock = FileLock(lock_file, timeout=5)
     with lock:
-        with open(DATA_FILE, "w", encoding="utf-8") as f:
+        with open(data_file, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
 def is_authenticated():
@@ -89,7 +96,7 @@ def api_transaction():
     """API endpoint to add a transaction to a child's account."""
     if not is_authenticated():
         return jsonify({"error": "Unauthorized"}), 401
-        
+    
     req_data = request.json
     child_id = req_data.get("child_id")
     amount = req_data.get("amount")
