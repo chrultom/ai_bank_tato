@@ -32,12 +32,12 @@ def flask_server():
     if os.path.exists(TEST_DATA_FILE):
         try:
             os.remove(TEST_DATA_FILE)
-        except:
+        except OSError:
             pass
     if os.path.exists(TEST_LOCK_FILE):
         try:
             os.remove(TEST_LOCK_FILE)
-        except:
+        except OSError:
             pass
 
 @pytest.fixture(autouse=True)

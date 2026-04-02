@@ -31,3 +31,12 @@
 - Interactive dashboard with large, touch-friendly buttons for mobile use.
 - Use visual cues: Green for positive balances, Red for negative.
 - Modals for transaction inputs to keep the main view clean.
+
+# 7. PYTHON ENVIRONMENT RULES
+- ALWAYS use the virtual environment located in `.venv/` for all Python commands (pip, pytest, ruff, flask).
+- NEVER install packages globally. 
+- BEFORE running any python/pip command, verify the path: 
+  * On Windows: use `.venv\Scripts\python.exe` and `.venv\Scripts\pip.exe`.
+  * On Unix: use `.venv/bin/python` and `.venv/bin/pip`.
+- PREFER calling modules via the venv python executable (e.g., `.venv\Scripts\python.exe -m pip install ...`) to guarantee environment isolation.
+- If the terminal is not activated, use the full path to the executable in the `.venv` folder.

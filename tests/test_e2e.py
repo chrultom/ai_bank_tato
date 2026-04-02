@@ -1,5 +1,3 @@
-import os
-import pytest
 import uuid
 from playwright.sync_api import Page, expect
 
