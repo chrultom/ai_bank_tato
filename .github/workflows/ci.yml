@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      APP_PIN: ${{ secrets.SECRET_PIN }}
+      DATA_FILE_PATH: data_test.json
+      SECRET_KEY: test-secret-key-for-ci
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        # Ensure pytest and playwright are installed just in case they are missing from requirements.txt
+        pip install pytest pytest-playwright
+
+    - name: Install Playwright browsers
+      run: playwright install chromium
+
+    - name: Start the Flask server in the background
+      run: |
+        python app.py &
+        # Wait for the server to initialize
+        sleep 3
+        
+    - name: Run linting with ruff
+      run: ruff check .
+
+    - name: Run type checking with mypy
+      run: mypy . --ignore-missing-imports
+
+    - name: Run tests with pytest
+      run: pytest --tracing=retain-on-failure
+
+    - name: Upload test artifacts on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: test-results/
+        retention-days: 7

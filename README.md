@@ -1,5 +1,6 @@
 # Parents Bank 🏦
 
+[![CI](https://github.com/USERNAME/ai_bank_tato/actions/workflows/ci.yml/badge.svg)](https://github.com/USERNAME/ai_bank_tato/actions/workflows/ci.yml)
 ![Parents Bank](https://img.shields.io/badge/Status-Active-success) ![Python](https://img.shields.io/badge/Python-3.x-blue) ![Flask](https://img.shields.io/badge/Flask-3.x-lightgrey)
 
 **Parents Bank** is a lightweight, mobile-first web application built with Python (Flask) and Tailwind CSS. It serves as a virtual "family bank" to help parents track their children's allowances, chores, and expenditures. It supports up to 4 child slots, with real-time updates without page reloads (SPA-like experience via Vanilla JS).
@@ -72,4 +73,4 @@
 ### 🛠️ Future Roadmap (TODO)
 - [x] Implement unit tests using `pytest` for backend logic.
 - [x] Implement end-to-end (E2E) tests using `playwright`.
-- [ ] Configure CI/CD Pipeline (e.g., GitHub Actions) for automated testing and linting.
+- [x] Configure CI/CD Pipeline (e.g., GitHub Actions) for automated testing and linting.

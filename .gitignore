@@ -8,6 +8,8 @@ env/
 
 # Local database / data
 data.json
+data_test.json
+*.lock
 data.json.lock
 
 # Python cache
